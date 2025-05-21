@@ -1,0 +1,12 @@
+name: ExpBottles
+version: 1.0
+description: Collects player's exp to bottles
+
+main: com.github.groundbreakingmc.expbottles.ExpBottles
+api-version: 1.16
+
+libraries:
+  - org.spongepowered:configurate-yaml:4.0.0
+
+author: GroundbreakingMC
+website: https://github.com/groundbreakingmc
