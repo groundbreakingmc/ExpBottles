@@ -15,12 +15,19 @@ repositories {
 dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
     // https://github.com/groundbreakingmc/MyLib
-    compileOnly("com.github.groundbreakingmc:MyLib:main-SNAPSHOT")
+    implementation("com.github.groundbreakingmc:MyLib:main-SNAPSHOT") {
+        isChanging = true
+    }
+    // https://github.com/SpongePowered/Configurate
+    compileOnly("org.spongepowered:configurate-yaml:4.0.0")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
 
 tasks {
     withType<JavaCompile> {
@@ -30,7 +37,7 @@ tasks {
     }
 
     shadowJar {
-        relocate("com.github.groundbreakingmc.mylib", "com.github.groundbreakingmc.hldynamitesticks.mylib")
+        relocate("com.github.groundbreakingmc.mylib", "com.github.groundbreakingmc.expbottles.mylib")
         minimize()
     }
 

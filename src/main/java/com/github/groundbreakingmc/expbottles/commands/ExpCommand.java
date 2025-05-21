@@ -2,6 +2,7 @@ package com.github.groundbreakingmc.expbottles.commands;
 
 import com.github.groundbreakingmc.expbottles.ExpBottles;
 import com.github.groundbreakingmc.expbottles.config.ConfigValues;
+import com.github.groundbreakingmc.mylib.utils.command.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -27,10 +28,6 @@ public final class ExpCommand implements TabExecutor {
         this.settings = plugin.getConfigValues().getSettings();
         this.messages = plugin.getConfigValues().getMessages();
     }
-
-    // /exp <amount> <player> force
-    // /exp reload
-    // - args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission("expbottles.reload")
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -73,14 +70,20 @@ public final class ExpCommand implements TabExecutor {
         }
 
         if (target == null) {
-            sender.sendMessage(this.messages.getPlayerNotFound());
+            sender.sendMessage(this.messages.getPlayerNotFound().replaceText(builder -> builder
+                    .match("\\{player}")
+                    .replacement(args[1])
+            ));
             return true;
         }
 
         boolean force = args.length > 2 && args[2].equalsIgnoreCase("force");
         if (!force && this.settings.isRequireBottle() && this.processEmptyBottleCheck(target)) {
             if (sender != target) {
-                sender.sendMessage(this.messages.getNoBottleIfOther());
+                sender.sendMessage(this.messages.getNoBottleIfOther().replaceText(builder -> builder
+                        .match("\\{player}")
+                        .replacement(target.getName())
+                ));
             }
 
             target.sendMessage(this.messages.getNoBottle());
@@ -89,9 +92,14 @@ public final class ExpCommand implements TabExecutor {
 
         final int expAmount = this.getExpAmount(levels);
         final int playerExp = target.getTotalExperience();
+        sender.sendMessage(Integer.toString(expAmount));
+        sender.sendMessage(Integer.toString(playerExp));
         if (!force && playerExp < expAmount) {
             if (sender != target) {
-                sender.sendMessage(this.messages.getNotEnoughExpIfOther());
+                sender.sendMessage(this.messages.getNotEnoughExpIfOther().replaceText(builder -> builder
+                        .match("\\{player}")
+                        .replacement(target.getName())
+                ));
             }
 
             sender.sendMessage(this.messages.getNotEnoughExp());
@@ -111,6 +119,18 @@ public final class ExpCommand implements TabExecutor {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (args.length == 1 && sender.hasPermission("expbottles.use")) {
+            return List.of(args[0].isEmpty() ? "<количество>" : args[0]);
+        }
+        if (sender.hasPermission("expbottles.extended")) {
+            if (args.length == 2) {
+                return CommandUtils.tabCompletePlayerNames(args[1]);
+            }
+            if (args.length == 3) {
+                return List.of("force");
+            }
+        }
+
         return List.of();
     }
 
@@ -128,7 +148,7 @@ public final class ExpCommand implements TabExecutor {
         }
     }
 
-    private  int getExpAmount(int level) {
+    private int getExpAmount(int level) {
         if (level <= 15) {
             return level * level + 6 * level;
         } else if (level <= 30) {
@@ -153,7 +173,7 @@ public final class ExpCommand implements TabExecutor {
         itemStack.setItemMeta(itemMeta);
 
         final PlayerInventory inventory = player.getInventory();
-        if (inventory.addItem(itemStack).isEmpty()) {
+        if (!inventory.addItem(itemStack).isEmpty()) {
             player.getWorld().dropItem(player.getLocation(), itemStack);
         }
     }

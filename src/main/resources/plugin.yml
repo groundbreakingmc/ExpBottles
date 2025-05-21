@@ -10,3 +10,11 @@ libraries:
 
 author: GroundbreakingMC
 website: https://github.com/groundbreakingmc
+
+permission:
+  expbottles.use:
+    default: false
+  expbottles.extended:
+    default: false
+  expbottles.reload:
+    default: false

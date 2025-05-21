@@ -5,17 +5,16 @@ import com.github.groundbreakingmc.mylib.config.ConfigProcessor;
 import com.github.groundbreakingmc.mylib.config.annotations.Config;
 import com.github.groundbreakingmc.mylib.config.annotations.Section;
 import com.github.groundbreakingmc.mylib.config.annotations.Value;
-
-import java.util.List;
-
 import com.github.groundbreakingmc.mylib.logger.console.LoggerFactory;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
+import java.util.List;
+
 @Getter
 @Config(
         fileName = "config.yml",
-        version = 1.0D,
+        version = 1.0d,
         versionPath = "settings.config-version",
         colorizerPath = "settings.colorizer-mode"
 )

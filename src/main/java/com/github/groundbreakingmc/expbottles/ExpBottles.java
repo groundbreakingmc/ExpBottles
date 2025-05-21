@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ public final class ExpBottles extends JavaPlugin {
         String oldCommand = settings.getCommand();
         List<String> oldAliases = settings.getAliases();
 
-        this.configValues.setupValues();
+        final ConfigurationNode config = this.configValues.setupValues();
 
         String newCommand = settings.getCommand();
         List<String> newAliases = settings.getAliases();
